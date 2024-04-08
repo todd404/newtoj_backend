@@ -1,0 +1,38 @@
+spring:
+  application:
+   name:
+    toj_backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/new_oj
+    username: root
+    password: thinkpadx201
+    driver-class-name: com.mysql.jdbc.Driver
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: thinkpadx201
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+jwt:
+  tokenHeader: Authorization # JWT 存储的请求头
+  secret: MEgCQQC8qKChWIKoYViNd/Y8RfnOM9oSXKsihNUugVb+F/I0uiqqb+gAfAyBR9dcsoVBNBK9Z5fqULsU4g3wSu0gSnLzAgMBAAE= # JWT 加解密使用的密钥
+  expiration: 604800 # JWT 的过期时间，单位秒，604800 = 7天
+  tokenHead: 'Bearer '  # JWT 的开头
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true #开启下划线(value_name)命名转驼峰(valueName)命名
+
+secure:
+  ignored:
+    urls:
+      - /api/login
+      - /api/comments
