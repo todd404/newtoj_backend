@@ -1,9 +1,12 @@
 package com.todd.toj_backend;
 
 import com.todd.toj_backend.mapper.ProblemMapper;
+import com.todd.toj_backend.pojo.problem.Problem;
 import com.todd.toj_backend.pojo.problem.ProblemConfig;
+import com.todd.toj_backend.pojo.problem.ScoreConfig;
 import com.todd.toj_backend.service.CommentService;
-import com.todd.toj_backend.utils.JudgeMQSender;
+import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
+import com.todd.toj_backend.utils.RedisCache;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,13 +24,23 @@ class TojBackendApplicationTests {
     @Autowired
     JudgeMQSender judgeMqSender;
 
+    @Autowired
+    RedisCache redisCache;
+
 //    @Test
 //    void insertProblemTest() {
 //        Problem problem = new Problem();
 //        problem.setTitle("test");
 //        problem.setContent("123");
+//
 //        ProblemConfig problemConfig = new ProblemConfig();
-//        problemConfig.setArguments(Arrays.asList("int[]", "int"));
+//        ScoreConfig scoreConfig = new ScoreConfig();
+//        scoreConfig.setBasicCasesScore(50);
+//        scoreConfig.setBasicCasesCount(3);
+//        scoreConfig.setSpecialCasesScoreList(Arrays.asList(15, 15, 20));
+//        problemConfig.setScoreConfig(scoreConfig);
+//        problemConfig.setArgumentTypes(Arrays.asList("int[]", "int"));
+//        problemConfig.setArgumentNames(Arrays.asList("nums", "num"));
 //        problemConfig.setMemoryLimit(10000);
 //        problemConfig.setFunctionName("allAdd");
 //        problemConfig.setReturnType("int[]");
@@ -44,14 +57,40 @@ class TojBackendApplicationTests {
 //        return;
 //    }
 
-    @Test
-    void mqTest(){
-        ProblemConfig problemConfig = new ProblemConfig();
-        problemConfig.setArguments(Arrays.asList("int[]", "int"));
-        problemConfig.setMemoryLimit(10000);
-        problemConfig.setFunctionName("allAdd");
-        problemConfig.setReturnType("int[]");
-        problemConfig.setTimeLimit(200000);
-        judgeMqSender.send(problemConfig);
-    }
+//    @Test
+//    void mqTest(){
+//        ProblemConfig problemConfig = new ProblemConfig();
+//        problemConfig.setArguments(Arrays.asList("int[]", "int"));
+//        problemConfig.setMemoryLimit(10000);
+//        problemConfig.setFunctionName("allAdd");
+//        problemConfig.setReturnType("int[]");
+//        problemConfig.setTimeLimit(200000);
+//
+//        JudgeConfig judgeConfig = new JudgeConfig();
+//        judgeConfig.setUuid("1234");
+//        judgeConfig.setLanguage("cpp");
+//        judgeConfig.setCode("""
+//                class Solution {
+//                public:
+//                	vector<int> allAdd(vector<int> nums, int n) {
+//                		for (int& num : nums) {
+//                			num += n;
+//                		}
+//
+//                		return nums;
+//                	}
+//                };
+//                """);
+//        judgeConfig.setProblemId("1");
+//        judgeConfig.setProblemConfig(problemConfig);
+//
+//        judgeMqSender.send(judgeConfig);
+//    }
+
+//    @Test
+//    void redisTest(){
+//        String msg = redisCache.getCacheObject("judge:a4c4fca2-cfdf-4624-9ac9-388a7910d922");
+//        return;
+//    }
+
 }
