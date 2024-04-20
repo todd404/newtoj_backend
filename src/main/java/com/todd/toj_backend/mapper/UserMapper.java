@@ -10,4 +10,6 @@ public interface UserMapper {
     @Select("select * from user where username=#{username}")
     public User queryUserByUsername(@Param("username") String username);
 
+    @Select("select * from user where user_id=#{userId}")
+    User queryUserByUserId(@Param("userId") String userId);
 }

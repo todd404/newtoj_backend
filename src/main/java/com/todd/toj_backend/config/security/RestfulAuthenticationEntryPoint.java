@@ -27,7 +27,7 @@ public class RestfulAuthenticationEntryPoint implements AuthenticationEntryPoint
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ResponseResult responseResult = new ResponseResult<>(401, "未登录");
+        ResponseResult responseResult = new ResponseResult<>(401, authException.getMessage());
 
         // 设置响应头，允许任何域进行跨域请求
         response.setHeader("Access-Control-Allow-Origin", "*");

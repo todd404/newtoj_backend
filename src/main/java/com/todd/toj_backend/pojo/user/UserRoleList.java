@@ -6,7 +6,7 @@ import java.util.List;
 
 public class UserRoleList {
     static public String[] getUserRoleArray(){
-        String[] result = {"user", "co", "admin"};
+        String[] result = {"user", "co", "teacher", "admin"};
         return result;
     }
 

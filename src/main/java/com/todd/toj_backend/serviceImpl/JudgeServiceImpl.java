@@ -59,6 +59,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Override
     public JudgeStatusResponse getJudgeStatus(String uuid) {
+        //TODO:添加功能：行号映射
         JudgeReport judgeReport = null;
         try {
             judgeReport = queryJudgeReport(uuid);
@@ -71,7 +72,7 @@ public class JudgeServiceImpl implements JudgeService {
         }
 
         JudgeStatusResponse result = new JudgeStatusResponse();
-        if(judgeReport.getStatusCode() < 200 || judgeReport.getStatusCode() > 500){
+        if(judgeReport.getStatusCode() < 200 || judgeReport.getStatusCode() >= 300){
             return new JudgeStatusResponse(judgeReport.getStatusCode(), judgeReport.getMsg());
         }
 

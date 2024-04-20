@@ -10,8 +10,8 @@ import java.util.List;
 public class ProblemConfig implements Serializable {
     String functionName;
     String returnType;
-    List<String> argumentTypes = new ArrayList<>();
-    List<String> argumentNames = new ArrayList<>();
+    List<String> argumentTypeList = new ArrayList<>();
+    List<String> argumentNameList = new ArrayList<>();
     Integer timeLimit;
     Integer memoryLimit;
     ScoreConfig scoreConfig;

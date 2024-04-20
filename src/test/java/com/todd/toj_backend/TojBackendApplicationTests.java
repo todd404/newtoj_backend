@@ -1,9 +1,14 @@
 package com.todd.toj_backend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
+import com.todd.toj_backend.mq.mq_sender.RunMQSender;
 import com.todd.toj_backend.pojo.problem.Problem;
 import com.todd.toj_backend.pojo.problem.ProblemConfig;
 import com.todd.toj_backend.pojo.problem.ScoreConfig;
+import com.todd.toj_backend.pojo.run.RunConfig;
+import com.todd.toj_backend.pojo.run.RunReport;
 import com.todd.toj_backend.service.CommentService;
 import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
 import com.todd.toj_backend.utils.RedisCache;
@@ -23,6 +28,9 @@ class TojBackendApplicationTests {
 
     @Autowired
     JudgeMQSender judgeMqSender;
+
+    @Autowired
+    RunMQSender runMQSender;
 
     @Autowired
     RedisCache redisCache;
@@ -91,6 +99,40 @@ class TojBackendApplicationTests {
 //    void redisTest(){
 //        String msg = redisCache.getCacheObject("judge:a4c4fca2-cfdf-4624-9ac9-388a7910d922");
 //        return;
+//    }
+
+//    @Test
+//    void runCodeForResultTest(){
+//        RunConfig runConfig = new RunConfig();
+//        runConfig.setUuid("123");
+//        runConfig.setLanguage("cpp");
+//        runConfig.setCode("""
+//                class Solution {
+//                public:
+//                	vector<int> allAdd(vector<int> nums, int n) {
+//                		for (int& num : nums) {
+//                			num += n;
+//                		}
+//
+//                		return nums;
+//                	}
+//                };
+//                """);
+//        runConfig.setProblemId("1");
+//
+//        runMQSender.send(runConfig);
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        RunReport runReport = new RunReport();
+//        runReport.setStatusCode(100);
+//        runReport.setRunConfig(runConfig);
+//        try {
+//            String msg = objectMapper.writeValueAsString(runReport);
+//            redisCache.setCacheObject("run:"+runConfig.getUuid(), msg);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
 //    }
 
 }

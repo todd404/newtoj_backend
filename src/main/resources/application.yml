@@ -3,6 +3,9 @@ spring:
    name:
     toj_backend
 
+  profiles:
+    include: typemap
+
   datasource:
     url: jdbc:mysql://localhost:3306/new_oj
     username: root
@@ -24,7 +27,7 @@ spring:
 jwt:
   tokenHeader: Authorization # JWT 存储的请求头
   secret: MEgCQQC8qKChWIKoYViNd/Y8RfnOM9oSXKsihNUugVb+F/I0uiqqb+gAfAyBR9dcsoVBNBK9Z5fqULsU4g3wSu0gSnLzAgMBAAE= # JWT 加解密使用的密钥
-  expiration: 604800 # JWT 的过期时间，单位秒，604800 = 7天
+  expiration: 15759360 # JWT 的过期时间，单位秒，604800 = 7天
   tokenHead: 'Bearer '  # JWT 的开头
 
 mybatis:

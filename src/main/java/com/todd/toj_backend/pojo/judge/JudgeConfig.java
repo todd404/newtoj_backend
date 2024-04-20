@@ -9,5 +9,7 @@ public class JudgeConfig {
     String problemId;
     String uuid;
     String code;
+    String type;
+    String forUUID;
     ProblemConfig problemConfig;
 }

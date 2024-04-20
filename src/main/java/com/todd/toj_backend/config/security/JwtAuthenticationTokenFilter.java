@@ -64,7 +64,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             // 从 JWT 令牌中获取用户名
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
             // 记录日志
-            LOGGER.info("checking username:{}", username);
 
             // 如果用户名不为空，并且 SecurityContextHolder 中的 Authentication 为空（表示该用户未登录）
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -79,7 +78,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     // 将请求中的详细信息（即：IP、SessionId 等）封装到 UsernamePasswordAuthenticationToken 对象中方便后续校验
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     // 记录日志
-                    LOGGER.info("authenticated user:{}", username);
                     // 将 UsernamePasswordAuthenticationToken 对象封装到 SecurityContextHolder 中方便后续校验
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }

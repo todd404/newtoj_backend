@@ -5,13 +5,14 @@ import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.judge.JudgeConfig;
 import com.todd.toj_backend.pojo.judge.JudgeResponse;
+import com.todd.toj_backend.pojo.run.RunRequest;
 import com.todd.toj_backend.service.JudgeService;
+import com.todd.toj_backend.service.RunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +22,9 @@ public class JudgeController {
 
     @Autowired
     JudgeService judgeService;
+
+    @Autowired
+    RunService runService;
 
     @PostMapping("/judge")
     @PreAuthorize("hasAnyAuthority('user')")
@@ -40,6 +44,32 @@ public class JudgeController {
         var result = judgeService.getJudgeStatus(judgeResponse.getUuid());
         if(result == null){
             return new ResponseResult(500, "uuid错误");
+        }else{
+            return new ResponseResult(200, result);
+        }
+    }
+
+    @PostMapping("/run")
+    @PreAuthorize("hasAnyAuthority('user')")
+    public ResponseResult runForResult(@RequestBody RunRequest runRequest) throws IOException {
+        var uuid = runService.runForResult(runRequest);
+
+        if(uuid == null){
+            return new ResponseResult(500, "内部错误");
+        }else{
+            JudgeResponse judgeResponse = new JudgeResponse();
+            judgeResponse.setUuid(uuid);
+            return new ResponseResult(200, judgeResponse);
+        }
+    }
+
+    @GetMapping("/run-status")
+    @PreAuthorize("hasAnyAuthority('user')")
+    public ResponseResult getRunStatus(@RequestParam("uuid") String uuid) throws JsonProcessingException {
+        var result = runService.getRunStatus(uuid);
+
+        if(result == null){
+            return new ResponseResult(500, "内部错误");
         }else{
             return new ResponseResult(200, result);
         }

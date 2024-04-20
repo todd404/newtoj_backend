@@ -1,10 +1,14 @@
 package com.todd.toj_backend.controller;
 
 import com.todd.toj_backend.pojo.ResponseResult;
+import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.pojo.user.User;
+import com.todd.toj_backend.pojo.user.UserInfo;
 import com.todd.toj_backend.service.LoginService;
+import com.todd.toj_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     LoginService loginService;
+
+    @Autowired
+    UserService userService;
 
     @PostMapping("/login")
     public ResponseResult login(@RequestBody User user){
@@ -25,16 +32,16 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyAuthority('user')")
-    @GetMapping("/test")
-    public String test(){
-        return "test";
+    @GetMapping("/userinfo")
+    public ResponseResult userinfo(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+
+        UserInfo userInfo = userService.getUserInfo(loginUser.getUsername());
+        if(userInfo == null){
+            return new ResponseResult(500, "获取用户信息失败");
+        }
+
+        return new ResponseResult<>(200, userInfo);
     }
-
-    @PreAuthorize("hasAnyAuthority('admin')")
-    @GetMapping("/admin")
-    public String admin(){
-        return "admin";
-    }
-
-
 }
