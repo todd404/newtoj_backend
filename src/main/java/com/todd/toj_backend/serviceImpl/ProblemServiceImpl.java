@@ -48,8 +48,23 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public List<ProblemsetItem> getProblemset() {
-        return problemMapper.queryProblemset();
+    public List<ProblemsetItem> getProblemset(String userId) {
+        List<ProblemsetItem> problemset = problemMapper.queryProblemset();
+        for(var p : problemset){
+            Double passRate = problemMapper.queryProblemPassRate(p.getId());
+            Boolean isPass = problemMapper.queryIsProblemPass(p.getId(), userId);
+
+            if(passRate == null){
+                passRate = 0.0;
+            }
+            if(isPass == null){
+                isPass = false;
+            }
+            p.setPassed(isPass);
+            p.setPassingRate(String.valueOf(passRate));
+        }
+
+        return problemset;
     }
 
     @Override

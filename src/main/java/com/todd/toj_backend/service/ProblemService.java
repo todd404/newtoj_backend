@@ -11,7 +11,8 @@ import java.util.List;
 
 
 public interface ProblemService {
-     List<ProblemsetItem> getProblemset();
-     Problem getProblem(String problemId);
+    List<ProblemsetItem> getProblemset(String userId);
+
+    Problem getProblem(String problemId);
      String addProblem(AddProblemRequest addProblemRequest) throws IOException, InterruptedException;
 }

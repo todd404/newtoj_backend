@@ -6,10 +6,7 @@ import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.ChoiceProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -26,5 +23,11 @@ public class ChoiceProblemController {
         choiceProblemService.addChoiceProblem(choiceProblemDao);
 
         return new ResponseResult(200, "");
+    }
+
+    @GetMapping("/choice-problem-list")
+    public ResponseResult getChoiceProblemList(@RequestParam("problemId") String problemId){
+        var result = choiceProblemService.getChoiceProblemList(problemId);
+        return new ResponseResult(200, result);
     }
 }

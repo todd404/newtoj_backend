@@ -12,4 +12,5 @@ public interface JudgeService {
     public JudgeResponse judge(JudgeConfig judgeConfig) throws JsonProcessingException;
     public JudgeReport queryJudgeReport(String uuid) throws JsonProcessingException;
     public JudgeStatusResponse getJudgeStatus(String uuid);
+    public void solveJudgeFinish(String uuid) throws JsonProcessingException;
 }
