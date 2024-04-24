@@ -22,7 +22,12 @@ public class ChoiceProblemImpl implements ChoiceProblemService {
     }
 
     @Override
-    public List<ChoiceProblem> getChoiceProblemList(String problemId) {
+    public List<ChoiceProblemDao> getOwnChoiceProblemList(String userId) {
+        return choiceProblemMapper.queryOwnChoiceProblem(userId);
+    }
+
+    @Override
+    public List<ChoiceProblem> getChoiceProblem(String problemId) {
         ChoiceProblemDao choiceProblemDao = choiceProblemMapper.queryChoiceProblem(problemId);
         List<ChoiceProblem> choiceProblemList = choiceProblemDao.getChoiceProblemList();
         String s = JSONUtil.toJsonStr(choiceProblemList);

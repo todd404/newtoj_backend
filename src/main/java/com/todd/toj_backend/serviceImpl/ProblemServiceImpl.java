@@ -3,10 +3,12 @@ package com.todd.toj_backend.serviceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.bean.file_builder.CppFileBuilder;
+import com.todd.toj_backend.mapper.JudgeHistoryMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mq.mq_sender.RunMQSender;
 import com.todd.toj_backend.pojo.problem.Problem;
 import com.todd.toj_backend.pojo.problem.ProblemsetItem;
+import com.todd.toj_backend.pojo.problem.ProgramProblemItem;
 import com.todd.toj_backend.pojo.problem.add_problem.AddProblemRequest;
 import com.todd.toj_backend.pojo.run.RunReport;
 import com.todd.toj_backend.service.ProblemService;
@@ -36,6 +38,9 @@ public class ProblemServiceImpl implements ProblemService {
     @Autowired
     ProblemMapper problemMapper;
 
+    @Autowired
+    JudgeHistoryMapper judgeHistoryMapper;
+
     private RunReport pullRunReport(String uuid) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String result = redisCache.getCacheObject("run:" + uuid);
@@ -51,8 +56,8 @@ public class ProblemServiceImpl implements ProblemService {
     public List<ProblemsetItem> getProblemset(String userId) {
         List<ProblemsetItem> problemset = problemMapper.queryProblemset();
         for(var p : problemset){
-            Double passRate = problemMapper.queryProblemPassRate(p.getId());
-            Boolean isPass = problemMapper.queryIsProblemPass(p.getId(), userId);
+            Double passRate = judgeHistoryMapper.queryProblemPassRate(p.getId());
+            Boolean isPass = judgeHistoryMapper.queryIsProblemPass(p.getId(), userId);
 
             if(passRate == null){
                 passRate = 0.0;
@@ -70,6 +75,11 @@ public class ProblemServiceImpl implements ProblemService {
     @Override
     public Problem getProblem(String problemId) {
         return problemMapper.queryProblem(problemId);
+    }
+
+    @Override
+    public List<ProgramProblemItem> getProgramProblemList(String userId) {
+        return problemMapper.queryProgramProblemList(userId);
     }
 
     @Override

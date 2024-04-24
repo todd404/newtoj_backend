@@ -24,6 +24,11 @@ spring:
     username: guest
     password: guest
 
+  servlet:
+    multipart:
+      max-file-size: 512MB
+      max-request-size: 512MB
+
 jwt:
   tokenHeader: Authorization # JWT 存储的请求头
   secret: MEgCQQC8qKChWIKoYViNd/Y8RfnOM9oSXKsihNUugVb+F/I0uiqqb+gAfAyBR9dcsoVBNBK9Z5fqULsU4g3wSu0gSnLzAgMBAAE= # JWT 加解密使用的密钥

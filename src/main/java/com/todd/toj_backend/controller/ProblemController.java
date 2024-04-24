@@ -3,6 +3,7 @@ package com.todd.toj_backend.controller;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.problem.Problem;
 import com.todd.toj_backend.pojo.problem.ProblemsetItem;
+import com.todd.toj_backend.pojo.problem.ProgramProblemItem;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,20 @@ public class ProblemController {
     }
 
     @GetMapping("/problem")
-    ResponseResult getProblem(@RequestParam("problemId") String problemId){
+    public ResponseResult getProblem(@RequestParam("problemId") String problemId){
         Problem problem = problemService.getProblem(problemId);
         return new ResponseResult<>(200, problem);
+    }
+
+    @GetMapping("/program-problem-list")
+    public ResponseResult getProgramProblemList(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+        if(loginUser == null){
+            return new ResponseResult<>(403, "未登录");
+        }
+
+        List<ProgramProblemItem> programProblemItems = problemService.getProgramProblemList(loginUser.getUser().getUserId().toString());
+        return new ResponseResult<>(200, programProblemItems);
     }
 }

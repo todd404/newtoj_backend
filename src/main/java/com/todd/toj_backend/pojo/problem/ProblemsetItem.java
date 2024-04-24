@@ -1,5 +1,6 @@
 package com.todd.toj_backend.pojo.problem;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.List;

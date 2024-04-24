@@ -12,6 +12,7 @@ import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -113,6 +114,11 @@ public class JudgeServiceImpl implements JudgeService {
         if(Objects.equals(type, "normal")){
             solveNormalJudge(judgeReport);
         }
+    }
+
+    @Override
+    public List<JudgeHistory> getJudgeHistory(String problemId, String userId) {
+        return judgeHistoryMapper.queryJudgeHistory(problemId, userId);
     }
 
     private void solveNormalJudge(JudgeReport judgeReport){

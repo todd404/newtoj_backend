@@ -9,5 +9,6 @@ import java.util.List;
 @Service
 public interface ChoiceProblemService {
     Integer addChoiceProblem(ChoiceProblemDao choiceProblemDao);
-    List<ChoiceProblem> getChoiceProblemList(String problemId);
+    List<ChoiceProblemDao> getOwnChoiceProblemList(String userId);
+    List<ChoiceProblem> getChoiceProblem(String problemId);
 }

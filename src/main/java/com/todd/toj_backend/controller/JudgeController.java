@@ -1,15 +1,18 @@
 package com.todd.toj_backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.todd.toj_backend.mapper.JudgeHistoryMapper;
 import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.judge.JudgeConfig;
 import com.todd.toj_backend.pojo.judge.JudgeResponse;
 import com.todd.toj_backend.pojo.run.RunRequest;
+import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.JudgeService;
 import com.todd.toj_backend.service.RunService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -25,6 +28,9 @@ public class JudgeController {
 
     @Autowired
     RunService runService;
+
+    @Autowired
+    JudgeHistoryMapper judgeHistoryMapper;
 
     @PostMapping("/judge")
     @PreAuthorize("hasAnyAuthority('user')")
@@ -73,5 +79,17 @@ public class JudgeController {
         }else{
             return new ResponseResult(200, result);
         }
+    }
+
+    @GetMapping("/judge-history")
+    public ResponseResult getJudgeHistory(@RequestParam("problemId") String problemId){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+        if(loginUser == null){
+            return new ResponseResult(403, "未登录");
+        }
+        var result = judgeHistoryMapper.queryJudgeHistory(problemId, loginUser.getUser().getUserId().toString());
+
+        return new ResponseResult<>(200, result);
     }
 }

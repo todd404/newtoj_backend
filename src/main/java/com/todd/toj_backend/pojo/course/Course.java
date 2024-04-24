@@ -1,5 +1,6 @@
 package com.todd.toj_backend.pojo.course;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
