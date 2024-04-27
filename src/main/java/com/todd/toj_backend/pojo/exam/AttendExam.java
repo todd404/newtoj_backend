@@ -2,10 +2,11 @@ package com.todd.toj_backend.pojo.exam;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class ExamItem {
-    Integer problemId;
+public class AttendExam {
     String type;
     String title;
-    Integer score;
+    List<ExamWithScore> attendExamItemList;
 }

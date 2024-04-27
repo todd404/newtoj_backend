@@ -1,5 +1,7 @@
 package com.todd.toj_backend.pojo.exam;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,5 +15,6 @@ public class Exam {
     Date startTime;
     Date endTime;
     Integer timeLimit;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     List<ExamItem> examItemList;
 }

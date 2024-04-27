@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.mapper.JudgeHistoryMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
+import com.todd.toj_backend.pojo.exam.ExamItem;
+import com.todd.toj_backend.pojo.exam.ExamProcess;
 import com.todd.toj_backend.pojo.judge.*;
 import com.todd.toj_backend.pojo.problem.Problem;
 import com.todd.toj_backend.service.JudgeService;
@@ -12,6 +14,7 @@ import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -113,6 +116,8 @@ public class JudgeServiceImpl implements JudgeService {
         String type = judgeReport.getJudgeConfig().getType();
         if(Objects.equals(type, "normal")){
             solveNormalJudge(judgeReport);
+        } else if (Objects.equals(type, "exam")) {
+            solveExamJudge(judgeReport);
         }
     }
 
@@ -154,5 +159,55 @@ public class JudgeServiceImpl implements JudgeService {
         }
 
         judgeHistoryMapper.insertJudgeHistory(judgeHistory);
+    }
+
+    private void solveExamJudge(JudgeReport judgeReport) throws JsonProcessingException {
+        String examUUID = judgeReport.getJudgeConfig().getForUUID();
+        String msg = redisCache.getCacheObject("exam:" + examUUID);
+        if(msg == null) return;
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExamProcess examProcess = objectMapper.readValue(msg, ExamProcess.class);
+        if(new Date().getTime() > examProcess.getStartTime().getTime() + (examProcess.getTimeLimit() * 1000 * 60)){
+            return;
+        }
+
+        int scoreIndex = -1;
+        List<ExamItem> examItemList = examProcess.getExamItemList();
+        for(int i = 0; i < examItemList.size(); i++){
+            String type = examItemList.get(i).getType();
+            if(!Objects.equals(examItemList.get(i).getType(), "program")) continue;
+
+            if(examItemList.get(i).getProblemId().toString().equals(judgeReport.getJudgeConfig().getProblemId())){
+                scoreIndex = i;
+                break;
+            }
+        }
+
+        if(scoreIndex == -1) return;
+
+        List<Float> scoreList = examProcess.getScoreList();
+        if(judgeReport.getStatusCode() >= 300){
+            scoreList.set(scoreIndex, 0f);
+        }
+
+        float totalScore = 0f;
+        List<Boolean> specialCasePassList = judgeReport.getSpecialCasesPassedList();
+        List<Integer> specialCasesScoreList = judgeReport.getJudgeConfig().getProblemConfig().getScoreConfig().getSpecialCasesScoreList();
+        if(judgeReport.getBasicCasesPassed()){
+            totalScore += judgeReport.getJudgeConfig().getProblemConfig().getScoreConfig().getBasicCasesScore();
+
+            for(int i = 0; i < specialCasePassList.size(); i++){
+                if(specialCasePassList.get(i)){
+                    totalScore += specialCasesScoreList.get(i);
+                }
+            }
+        }
+
+        double scoreScale = (double) examProcess.getExamItemList().get(scoreIndex).getScore() / 100;
+        float finallyScore = (float) (totalScore * scoreScale);
+        scoreList.set(scoreIndex, finallyScore);
+
+        examProcess.setScoreList(scoreList);
+        redisCache.setCacheObject("exam:" + examUUID, objectMapper.writeValueAsString(examProcess));
     }
 }

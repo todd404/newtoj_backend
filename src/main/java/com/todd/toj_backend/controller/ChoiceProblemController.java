@@ -1,7 +1,9 @@
 package com.todd.toj_backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.choice_problem.ChoiceProblemDao;
+import com.todd.toj_backend.pojo.choice_problem.JudgeChoiceProblemRequest;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.ChoiceProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +50,19 @@ public class ChoiceProblemController {
         List<ChoiceProblemDao> choiceProblemList = choiceProblemService.getOwnChoiceProblemList(loginUser.getUser().getUserId().toString());
 
         return new ResponseResult<>(200, choiceProblemList);
+    }
+
+    @PostMapping("/judge-choice-problem")
+    public ResponseResult judgeChoiceProblem(@RequestBody JudgeChoiceProblemRequest judgeChoiceProblemRequest) throws JsonProcessingException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+        if(loginUser == null){
+            return new ResponseResult(403, "未登录");
+        }
+
+        choiceProblemService.JudgeChoiceProblem(judgeChoiceProblemRequest.getAnswerList(),
+                judgeChoiceProblemRequest.getExamUUID(), judgeChoiceProblemRequest.getChoiceProblemId());
+
+        return new ResponseResult(200, "");
     }
 }

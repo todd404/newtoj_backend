@@ -2,6 +2,7 @@ package com.todd.toj_backend.controller;
 
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.course.AddCourseRequest;
+import com.todd.toj_backend.pojo.course.AttendCourse;
 import com.todd.toj_backend.pojo.course.Course;
 import com.todd.toj_backend.pojo.course.CourseFile;
 import com.todd.toj_backend.pojo.user.LoginUser;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -42,6 +42,21 @@ public class CourseController {
         return new ResponseResult(200, result);
     }
 
+    @GetMapping("/is-course-enroll")
+    public ResponseResult getIsCourseEnroll(@RequestParam("courseId") String courseId){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+        if(loginUser == null){
+            return new ResponseResult<>(403, "未登录");
+        }
+
+        AttendCourse attendCourse = new AttendCourse();
+        attendCourse.setCourseId(courseId);
+        attendCourse.setUserId(loginUser.getUser().getUserId().toString());
+
+        return new ResponseResult(200, courseService.isCourseEnroll(attendCourse));
+    }
+
     @PostMapping("/add-course")
     public ResponseResult addCourse(@RequestBody AddCourseRequest addCourseRequest){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -53,6 +68,19 @@ public class CourseController {
         courseService.addCourse(addCourseRequest);
 
         return new ResponseResult<>(200, "");
+    }
+
+    @PostMapping("/add-course-enroll")
+    public ResponseResult addCourseEnroll(@RequestBody AttendCourse attendCourse){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+        if(loginUser == null){
+            return new ResponseResult<>(403, "未登录");
+        }
+
+        attendCourse.setUserId(loginUser.getUser().getUserId().toString());
+        courseService.addCourseEnroll(attendCourse);
+        return new ResponseResult(200, "");
     }
 
     @PostMapping("/delete-course")
@@ -94,7 +122,7 @@ public class CourseController {
         if(loginUser == null){
             return new ResponseResult<>(403, "未登录");
         }
-        var result = courseService.getCourseList(loginUser.getUser().getUserId().toString());
+        var result = courseService.getOwnCourseList(loginUser.getUser().getUserId().toString());
 
         return new ResponseResult(200, result);
     }
@@ -104,5 +132,18 @@ public class CourseController {
         var result = courseService.getCourseFileList(courseId);
 
         return new ResponseResult(200, result);
+    }
+
+    @PostMapping("/remove-course-enroll")
+    public ResponseResult removeCourseEnroll(@RequestBody AttendCourse attendCourse){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+        if(loginUser == null){
+            return new ResponseResult<>(403, "未登录");
+        }
+
+        attendCourse.setUserId(loginUser.getUser().getUserId().toString());
+        courseService.deleteCourseEnroll(attendCourse);
+        return new ResponseResult(200, "");
     }
 }

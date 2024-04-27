@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import com.todd.toj_backend.mapper.CourseMapper;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.course.AddCourseRequest;
+import com.todd.toj_backend.pojo.course.AttendCourse;
 import com.todd.toj_backend.pojo.course.Course;
 import com.todd.toj_backend.pojo.course.CourseFile;
 import com.todd.toj_backend.service.CourseService;
@@ -25,6 +26,19 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getAllCourseList() {
         return courseMapper.queryAllCourse();
+    }
+
+    @Override
+    public Boolean isCourseEnroll(AttendCourse attendCourse) {
+        var result = courseMapper.queryIsCourseEnroll(attendCourse);
+        if(result == null)
+            return false;
+        return courseMapper.queryIsCourseEnroll(attendCourse) > 0;
+    }
+
+    @Override
+    public Integer addCourseEnroll(AttendCourse attendCourse) {
+        return courseMapper.insertCourseEnroll(attendCourse);
     }
 
     @Override
@@ -94,7 +108,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> getCourseList(String userId) {
+    public Integer deleteCourseEnroll(AttendCourse attendCourse) {
+        return courseMapper.deleteCourseEnroll(attendCourse);
+    }
+
+    @Override
+    public List<Course> getOwnCourseList(String userId) {
         return courseMapper.queryCourseUserIdLimit(userId);
     }
 
