@@ -23,11 +23,11 @@ public class ProblemController {
     @GetMapping("/problemset")
     public ResponseResult getProblemset(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LoginUser loginUser = (LoginUser) principal;
         String userId = "";
-        if(loginUser == null){
+        if(principal == "anonymousUser"){
             userId = "0";
         }else{
+            LoginUser loginUser = (LoginUser) principal;
             userId = loginUser.getUser().getUserId().toString();
         }
         List<ProblemsetItem> problemset = problemService.getProblemset(userId);

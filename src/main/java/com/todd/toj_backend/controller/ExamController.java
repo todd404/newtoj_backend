@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.course.CourseExam;
 import com.todd.toj_backend.pojo.exam.*;
-import com.todd.toj_backend.pojo.job.Job;
 import com.todd.toj_backend.pojo.job.JobExam;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.ExamService;

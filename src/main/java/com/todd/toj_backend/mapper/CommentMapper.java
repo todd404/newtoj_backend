@@ -1,8 +1,6 @@
 package com.todd.toj_backend.mapper;
 
 import com.todd.toj_backend.pojo.comment.Comment;
-import com.todd.toj_backend.pojo.comment.CommentReplay;
-import com.todd.toj_backend.pojo.comment.CommentUser;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -36,7 +34,7 @@ public interface CommentMapper {
             @Result(column = "username", property = "user.username"),
             @Result(column = "like_count", property = "likes")
     })
-    public List<Comment> queryParentComments(String problemId);
+    List<Comment> queryParentComments(String problemId);
 
     @Select("""
         select
@@ -65,7 +63,7 @@ public interface CommentMapper {
             @Result(column = "username", property = "user.username"),
             @Result(column = "like_count", property = "likes")
     })
-    public List<Comment> querySubComments(String commentId);
+    List<Comment> querySubComments(String commentId);
 
     @Select("""
         select
@@ -94,7 +92,12 @@ public interface CommentMapper {
             @Result(column = "username", property = "user.username"),
             @Result(column = "like_count", property = "likes")
     })
-    public Comment queryComment(String commentId);
+    Comment queryComment(String commentId);
+
+    @Select("select comment_id from comment_like " +
+            "where exists(select id from comment where problem_id = #{problemId}) and user_id = #{userId} and is_like=true")
+    List<Integer> queryCommentLikeList(@Param("problemId") String problemId,
+                                       @Param("userId") String userId);
 
     @Options(useGeneratedKeys = true, keyProperty = "id")
     @Insert("insert into " +

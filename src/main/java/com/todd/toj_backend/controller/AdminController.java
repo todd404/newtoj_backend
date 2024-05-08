@@ -7,6 +7,7 @@ import com.todd.toj_backend.pojo.Uuid;
 import com.todd.toj_backend.pojo.problem.add_problem.AddProblemRequest;
 import com.todd.toj_backend.pojo.run.RunReport;
 import com.todd.toj_backend.service.ProblemService;
+import com.todd.toj_backend.service.UserService;
 import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,15 @@ public class AdminController {
     ProblemService problemService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     RedisCache redisCache;
+
+    @GetMapping("/all-user")
+    public ResponseResult getAllUser(){
+        return new ResponseResult(200, userService.getAllUserList());
+    }
 
     @PostMapping("/add-problem")
     public ResponseResult addProblem(@RequestBody AddProblemRequest addProblemRequest) throws IOException, InterruptedException {

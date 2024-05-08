@@ -192,7 +192,9 @@ public class JudgeServiceImpl implements JudgeService {
 
         float totalScore = 0f;
         List<Boolean> specialCasePassList = judgeReport.getSpecialCasesPassedList();
-        List<Integer> specialCasesScoreList = judgeReport.getJudgeConfig().getProblemConfig().getScoreConfig().getSpecialCasesScoreList();
+        List<Integer> specialCasesScoreList = judgeReport.getJudgeConfig().getProblemConfig()
+                .getScoreConfig()
+                .getSpecialCasesScoreList();
         if(judgeReport.getBasicCasesPassed()){
             totalScore += judgeReport.getJudgeConfig().getProblemConfig().getScoreConfig().getBasicCasesScore();
 

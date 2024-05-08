@@ -11,6 +11,7 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "type-maps")
 public class TypeMap {
     private Map<String, String> cppTypeMap;
+    private Map<String, String> javaTypeMap;
     private Map<String, String> argumentFunctionMap;
     private Map<String, String> returnFunctionMap;
 }

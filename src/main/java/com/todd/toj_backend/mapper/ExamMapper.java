@@ -18,7 +18,8 @@ public interface ExamMapper {
     ExamResult queryExamResult(@Param("examId") String examId, @Param("userId") String userId);
 
     @Select("select exam.id, title, start_time, end_time, time_limit, score " +
-            "from exam left join exam_result er on exam.id = er.exam_id and er.user_id = #{userId}")
+            "from exam left join exam_result er on exam.id = er.exam_id and er.user_id = #{userId} " +
+            "where exam.id = #{examId}")
     ExamWithScore queryExamWithScore(@Param("examId") String examId, @Param("userId") String userId);
 
     @Select("select * from exam where user_id = #{userId}")

@@ -13,7 +13,6 @@ import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -35,10 +34,11 @@ public class RunServiceImpl implements RunService {
         String uuid = UUID.randomUUID().toString();
 
         String basePath = "D:/toj_files/run/" + uuid;
-        String templateFilePath = basePath + "/template.cpp";
+        String templateFilePath = basePath + "/template." + runRequest.getLanguage();
         String testFilePath = basePath + "/test.txt";
 
-        String templateFileSrc = "D:/toj_files/cpp/template/" + runRequest.getProblemId() + "." + runRequest.getLanguage();
+        String templateFileSrc = "D:/toj_files/%s/template/".formatted(runRequest.getLanguage())
+                + runRequest.getProblemId() + "." + runRequest.getLanguage();
         Files.createDirectory(Path.of(basePath));
         FileUtil.copy(Paths.get(templateFileSrc), Paths.get(templateFilePath));
         FileUtil.writeString(runRequest.getRunCase(), testFilePath, StandardCharsets.UTF_8);

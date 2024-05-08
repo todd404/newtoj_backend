@@ -8,7 +8,6 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,11 +18,11 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @Component("cppFileBuilder")
-public class CppFileBuilder {
+public class CppFileBuilder implements FileBuilder {
     @Autowired
     TypeMap typeMap;
 
-    public void buildCppFile(ProblemConfig problemConfig, String outputPath) throws IOException {
+    public void buildFile(ProblemConfig problemConfig, String outputPath) throws IOException {
         StringBuilder fileContent = new StringBuilder();
         String basePath = "D:\\toj_files\\cpp_template\\";
 

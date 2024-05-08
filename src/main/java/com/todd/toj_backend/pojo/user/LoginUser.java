@@ -19,6 +19,10 @@ public class LoginUser implements UserDetails {
 
     private User user;
 
+    public LoginUser(String str){
+
+    }
+
     @JSONField(serialize = false)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

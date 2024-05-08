@@ -8,9 +8,9 @@ import java.util.List;
 
 @Service
 public interface JudgeService {
-    public JudgeResponse judge(JudgeConfig judgeConfig) throws JsonProcessingException;
-    public JudgeReport queryJudgeReport(String uuid) throws JsonProcessingException;
-    public JudgeStatusResponse getJudgeStatus(String uuid);
-    public void solveJudgeFinish(String uuid) throws JsonProcessingException;
-    public List<JudgeHistory> getJudgeHistory(String problemId, String userId);
+    JudgeResponse judge(JudgeConfig judgeConfig) throws JsonProcessingException;
+    JudgeReport queryJudgeReport(String uuid) throws JsonProcessingException;
+    JudgeStatusResponse getJudgeStatus(String uuid);
+    void solveJudgeFinish(String uuid) throws JsonProcessingException;
+    List<JudgeHistory> getJudgeHistory(String problemId, String userId);
 }

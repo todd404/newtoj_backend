@@ -12,10 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @Component
-@Async
+@Async("asyncExecutor")
 public class Schedule {
     @Autowired
     RedisCache redisCache;

@@ -2,7 +2,6 @@ package com.todd.toj_backend.mq.mq_sender;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todd.toj_backend.pojo.judge.JudgeConfig;
 import com.todd.toj_backend.pojo.run.RunConfig;
 import com.todd.toj_backend.utils.RedisCache;
 import jakarta.annotation.Resource;

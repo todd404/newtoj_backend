@@ -3,6 +3,7 @@ package com.todd.toj_backend.utils;
 import cn.hutool.core.io.FileUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.bean.file_builder.CppFileBuilder;
+import com.todd.toj_backend.bean.file_builder.JavaFileBuilder;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mq.mq_sender.RunMQSender;
 import com.todd.toj_backend.pojo.problem.Problem;
@@ -15,9 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Paths;
 
 @Component
@@ -32,16 +31,21 @@ public class AddProblemAsync {
     CppFileBuilder cppFileBuilder;
 
     @Autowired
+    JavaFileBuilder javaFileBuilder;
+
+    @Autowired
     ProblemMapper problemMapper;
     @Async
     @Transactional
     public void addProblemProcess(AddProblemRequest addProblemRequest, String uuid) throws IOException, InterruptedException {
         String basePath = "D:/toj_files/run/" + uuid;
-        String templateFilePath = basePath + "/template.cpp";
+        String cppTemplateFilePath = basePath + "/template.cpp";
+        String javaTemplateFilePath = basePath + "/template.java";
         String testFilePath = basePath + "/test.txt";
         String answerFilePath = basePath + "/answer.txt";
 
-        cppFileBuilder.buildCppFile(addProblemRequest.getProblemConfig(), templateFilePath);
+        cppFileBuilder.buildFile(addProblemRequest.getProblemConfig(), cppTemplateFilePath);
+        javaFileBuilder.buildFile(addProblemRequest.getProblemConfig(), javaTemplateFilePath);
 
         if(addProblemRequest.getProblemCaseConfig().getCaseUploadedFile() != ""){
             FileUtil.copy(Paths.get("D:/toj_files/temp/" + addProblemRequest.getProblemCaseConfig().getCaseUploadedFile()),
@@ -89,7 +93,8 @@ public class AddProblemAsync {
                 problemMapper.insertProblem(problem);
                 problemMapper.insertProblemTags(problem.getId(), addProblemRequest.getProblemTags());
 
-                FileUtil.move(Paths.get(templateFilePath), Paths.get("D:/toj_files/cpp/template/" + problem.getId() + ".cpp"), true);
+                FileUtil.move(Paths.get(cppTemplateFilePath), Paths.get("D:/toj_files/cpp/template/" + problem.getId() + ".cpp"), true);
+                FileUtil.move(Paths.get(javaTemplateFilePath), Paths.get("D:/toj_files/java/template/" + problem.getId() + ".java"), true);
                 FileUtil.move(Paths.get(testFilePath), Paths.get("D:/toj_files/test/" + problem.getId() + ".txt"), true);
                 FileUtil.move(Paths.get(answerFilePath), Paths.get("D:/toj_files/answer/" + problem.getId() + ".txt"), true);
             }

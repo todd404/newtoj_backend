@@ -35,7 +35,7 @@ public interface JudgeHistoryMapper {
 
     @Insert("insert into judge_history (problem_id, user_id, is_pass, status, time_used, memory_used) VALUES " +
             "(#{problemId}, #{userId}, #{isPass}, #{status}, #{timeUsed}, #{memoryUsed})")
-    public Integer insertJudgeHistory(JudgeHistory judgeHistory);
+    Integer insertJudgeHistory(JudgeHistory judgeHistory);
 
 
 }

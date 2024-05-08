@@ -1,10 +1,13 @@
 package com.todd.toj_backend;
 
+import com.todd.toj_backend.mapper.CommentMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mapper.WhisperMapper;
 import com.todd.toj_backend.pojo.problem.ProblemsetItem;
 import com.todd.toj_backend.pojo.whisper.UnreadWhisper;
 import com.todd.toj_backend.pojo.whisper.Whisper;
+import com.todd.toj_backend.pojo.whisper.WhisperHistory;
+import com.todd.toj_backend.service.WhisperService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,39 +17,22 @@ import java.util.List;
 
 @SpringBootTest
 public class MapperTest {
-    @Autowired
-    WhisperMapper whisperMapper;
 
-    @Autowired
-    ProblemMapper problemMapper;
+   @Autowired
+    WhisperService whisperService;
+
+   @Autowired
+    CommentMapper commentMapper;
 
     @Test
-    void queryWhisper(){
-        String userId = "2";
-
-        List<Whisper> whisperList = whisperMapper.queryWhispers("2", "1");
-
+    void whisperHistoryTest(){
+        List<WhisperHistory> list = whisperService.getWhisperHistoryList(2);
         return;
     }
 
     @Test
-    void queryUnreadWhisper(){
-        List<UnreadWhisper> unreadWhisper = whisperMapper.queryUnreadWhisper("2");
-        return;
-    }
-
-    @Test
-    void insertTags(){
-        String problemId = "1";
-        List<String> tags = Arrays.asList("简单问题");
-
-        problemMapper.insertProblemTags(problemId, tags);
-    }
-
-    @Test
-    void getProblemset(){
-        List<ProblemsetItem> problemset = problemMapper.queryProblemset();
-
+    void commentLikeList(){
+        List<Integer> list = commentMapper.queryCommentLikeList("1", "2");
         return;
     }
 }

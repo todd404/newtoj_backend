@@ -3,13 +3,12 @@ package com.todd.toj_backend.controller;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.pojo.whisper.Whisper;
+import com.todd.toj_backend.pojo.whisper.WhisperHistory;
 import com.todd.toj_backend.service.WhisperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -51,6 +50,15 @@ public class WhisperController {
 
         var result = whisperService.getUnreadWhisper(loginUser.getUser().getUserId().toString());
         return new ResponseResult<>(200, result);
+    }
+
+    @GetMapping("/whisper-history")
+    ResponseResult whisperHistory(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+
+        var result = whisperService.getWhisperHistoryList(loginUser.getUser().getUserId());
+        return new ResponseResult(200, result);
     }
 
     @PreAuthorize("hasAnyAuthority('user')")

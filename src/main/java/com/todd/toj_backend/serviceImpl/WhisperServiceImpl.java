@@ -5,10 +5,13 @@ import com.todd.toj_backend.mapper.WhisperMapper;
 import com.todd.toj_backend.pojo.user.User;
 import com.todd.toj_backend.pojo.whisper.UnreadWhisper;
 import com.todd.toj_backend.pojo.whisper.Whisper;
+import com.todd.toj_backend.pojo.whisper.WhisperHistory;
 import com.todd.toj_backend.service.WhisperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -38,6 +41,40 @@ public class WhisperServiceImpl implements WhisperService {
         }
 
         return result;
+    }
+
+    @Override
+    public List<WhisperHistory> getWhisperHistoryList(Integer userId) {
+        List<WhisperHistory> whisperHistoryList;
+
+        whisperHistoryList = whisperMapper.queryReceiveWhisperHistory(userId.toString());
+        for(var whisperHis : whisperHistoryList){
+            String lastMessage = whisperMapper.queryLastMessage(whisperHis.getUserId(), userId);
+            whisperHis.setLastMessage(lastMessage);
+        }
+
+        List<WhisperHistory> sendWhipserHistoryList = whisperMapper.querySendWhisperHistory(userId.toString());
+        for(var sendWhisper : sendWhipserHistoryList){
+            String lastMessage = whisperMapper.queryLastMessage(userId, sendWhisper.getUserId());
+            sendWhisper.setLastMessage(lastMessage);
+            boolean isFound = false;
+            for(var whisper : whisperHistoryList){
+                if(sendWhisper.getUserId() == whisper.getUserId()){
+                    isFound = true;
+                    if(sendWhisper.getLastMessageDate().after(whisper.getLastMessageDate())){
+                        whisper.setLastMessage(lastMessage);
+                        whisper.setLastMessageDate(sendWhisper.getLastMessageDate());
+                    }
+                    break;
+                }
+            }
+
+            if(!isFound){
+                whisperHistoryList.add(sendWhisper);
+            }
+        }
+
+        return whisperHistoryList;
     }
 
     @Override

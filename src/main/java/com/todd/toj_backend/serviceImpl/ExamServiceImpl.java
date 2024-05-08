@@ -94,7 +94,7 @@ public class ExamServiceImpl implements ExamService {
             List<JobExam> jobExamList = examMapper.queryJobExam(String.valueOf(attJob.getJobId()));
             List<ExamWithScore> attendExamItemList = new ArrayList<>();
             for(var jobExam : jobExamList){
-                ExamWithScore examWithScore = examMapper.queryExamWithScore(String.valueOf(jobExam.getExamId()), userId);
+                ExamWithScore examWithScore = examMapper.queryExamWithScore(jobExam.getExamId().toString(), userId);
                 attendExamItemList.add(examWithScore);
             }
 

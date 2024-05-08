@@ -2,7 +2,6 @@ package com.todd.toj_backend.serviceImpl;
 
 import cn.hutool.core.io.FileUtil;
 import com.todd.toj_backend.mapper.CourseMapper;
-import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.course.AddCourseRequest;
 import com.todd.toj_backend.pojo.course.AttendCourse;
 import com.todd.toj_backend.pojo.course.Course;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -68,7 +68,7 @@ public class CourseServiceImpl implements CourseService {
         courseFile.setCourseId(courseId);
         courseFile.setFile(file.getOriginalFilename());
 
-        if(FileUtil.extName(file.getOriginalFilename()) == "mp4"){
+        if(Objects.equals(FileUtil.extName(file.getOriginalFilename()), "mp4")){
             courseFile.setFileType("video");
         }else {
             courseFile.setFileType("other");

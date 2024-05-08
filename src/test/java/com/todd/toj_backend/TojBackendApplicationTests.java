@@ -1,22 +1,12 @@
 package com.todd.toj_backend;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mq.mq_sender.RunMQSender;
-import com.todd.toj_backend.pojo.problem.Problem;
-import com.todd.toj_backend.pojo.problem.ProblemConfig;
-import com.todd.toj_backend.pojo.problem.ScoreConfig;
-import com.todd.toj_backend.pojo.run.RunConfig;
-import com.todd.toj_backend.pojo.run.RunReport;
 import com.todd.toj_backend.service.CommentService;
 import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
 import com.todd.toj_backend.utils.RedisCache;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Arrays;
 
 @SpringBootTest
 class TojBackendApplicationTests {

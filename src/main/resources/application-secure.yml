@@ -1,0 +1,12 @@
+secure:
+  ignored:
+    urls:
+      - /api/login
+      - /api/register
+      - /api/is-username-repeat
+      - /api/is-nickname-repeat
+      - /api/comments
+      - /api/problemset
+      - /api/problem
+      - /api/all-course
+      - /api/all-job

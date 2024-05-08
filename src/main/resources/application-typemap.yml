@@ -3,6 +3,10 @@ type-maps:
     int: int
     "[int[]]": vector<int>
 
+  java-type-map:
+    int: int
+    "[int[]]": int[]
+
   argument-function-map:
     int: stringToInt
     "[int[]]": stringToIntArray

@@ -3,7 +3,6 @@ package com.todd.toj_backend.controller;
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.job.AddJobRequest;
 import com.todd.toj_backend.pojo.job.AttendJob;
-import com.todd.toj_backend.pojo.job.Job;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;

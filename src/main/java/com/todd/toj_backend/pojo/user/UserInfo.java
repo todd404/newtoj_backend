@@ -9,4 +9,5 @@ public class UserInfo {
     String nickname;
     String avatar;
     String role;
+    Integer ranking;
 }

@@ -3,7 +3,6 @@ package com.todd.toj_backend.serviceImpl;
 import com.todd.toj_backend.mapper.CommentMapper;
 import com.todd.toj_backend.pojo.comment.Comment;
 import com.todd.toj_backend.pojo.comment.CommentReplay;
-import com.todd.toj_backend.pojo.comment.CommentUser;
 import com.todd.toj_backend.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +20,15 @@ public class CommentServiceImpl implements CommentService {
         for(var c : comments){
             CommentReplay replay = new CommentReplay();
             replay.setList(commentMapper.querySubComments(c.getId()));
-            c.setReplay(replay);
+            c.setReply(replay);
         }
 
         return comments;
+    }
+
+    @Override
+    public List<Integer> getCommentLikeList(String problemId, Integer userId) {
+        return commentMapper.queryCommentLikeList(problemId, userId.toString());
     }
 
     @Override

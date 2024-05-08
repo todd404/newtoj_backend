@@ -8,6 +8,7 @@ import java.util.List;
 @Service
 public interface CommentService {
     List<Comment> getAllCommentsByProblemId(String problemId);
+    List<Integer> getCommentLikeList(String problemId, Integer userId);
     Comment submitComment(Comment comment);
     Integer likeComment(Comment comment);
 }

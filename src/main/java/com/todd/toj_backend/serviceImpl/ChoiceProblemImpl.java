@@ -13,7 +13,6 @@ import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +48,8 @@ public class ChoiceProblemImpl implements ChoiceProblemService {
     }
 
     @Override
-    public void JudgeChoiceProblem(List<String> answerList, String examUUID, String choiceProblemId) throws JsonProcessingException {
+    public void JudgeChoiceProblem(List<String> answerList, String examUUID, String choiceProblemId)
+            throws JsonProcessingException {
         String msg = redisCache.getCacheObject("exam:" + examUUID);
         if(msg == null) return;
         ObjectMapper objectMapper = new ObjectMapper();

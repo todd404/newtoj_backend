@@ -1,10 +1,6 @@
 package com.todd.toj_backend.pojo.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 public class CommentUser {
     @JsonIgnore
@@ -38,8 +34,7 @@ public class CommentUser {
     }
 
     public String getAvatar() {
-        //return "/files/avatar/" + userId;
-        return "https://static.juzicon.com/user/avatar-bf22291e-ea5c-4280-850d-88bc288fcf5d-220408002256-ZBQQ.jpeg";
+        return "http://localhost/file/avatar/" + getUserId() + ".png";
     }
 
     public String getHomeLink() {

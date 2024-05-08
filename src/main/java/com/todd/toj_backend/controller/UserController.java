@@ -44,4 +44,25 @@ public class UserController {
 
         return new ResponseResult<>(200, userInfo);
     }
+
+    @GetMapping("/is-username-repeat")
+    public ResponseResult isUsernameRepeat(@RequestParam("username") String username){
+        return new ResponseResult(200, userService.isUsernameRepeat(username));
+    }
+
+    @GetMapping("/is-nickname-repeat")
+    public ResponseResult isNicknameRepeat(@RequestParam("nickname") String nickname){
+        return new ResponseResult(200, userService.isNicknameRepeat(nickname));
+    }
+
+    @PostMapping("/register")
+    public ResponseResult register(@RequestBody User user){
+        Integer result = userService.addUser(user);
+
+        if(result == 0){
+            return new ResponseResult(500, "注册失败");
+        }else{
+            return new ResponseResult(200, "注册成功");
+        }
+    }
 }

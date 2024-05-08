@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -63,7 +62,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             // 从 JWT 令牌中获取用户名
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            // 记录日志
 
             // 如果用户名不为空，并且 SecurityContextHolder 中的 Authentication 为空（表示该用户未登录）
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -74,10 +72,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 if (jwtTokenUtil.validateToken(authToken,loginUser)){
                     // 将用户信息封装到 UsernamePasswordAuthenticationToken 对象中（即：Authentication）
                     // 参数：用户信息、密码（因为 JWT 令牌中没有密码，所以这里传 null）、用户权限
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginUser,null,loginUser.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginUser
+                            ,null,loginUser.getAuthorities());
                     // 将请求中的详细信息（即：IP、SessionId 等）封装到 UsernamePasswordAuthenticationToken 对象中方便后续校验
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    // 记录日志
                     // 将 UsernamePasswordAuthenticationToken 对象封装到 SecurityContextHolder 中方便后续校验
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
