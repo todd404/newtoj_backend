@@ -48,7 +48,7 @@ public interface ExamMapper {
             "values (#{jobId}, #{examId})")
     Integer insertJobExam(JobExam jobExam);
 
-    @Insert("insert into exam_result (exam_id, user_id, score, timeUsed) VALUES " +
+    @Insert("insert ignore into exam_result (exam_id, user_id, score, timeUsed) VALUES " +
             "(#{examId}, #{userId}, #{score}, #{timeUsed})")
     Integer insertExamResult(ExamResult examResult);
 
