@@ -9,6 +9,7 @@ import com.todd.toj_backend.pojo.exam.ExamItem;
 import com.todd.toj_backend.pojo.exam.ExamProcess;
 import com.todd.toj_backend.pojo.judge.*;
 import com.todd.toj_backend.pojo.problem.Problem;
+import com.todd.toj_backend.pojo.problem.ProblemAnswer;
 import com.todd.toj_backend.service.JudgeService;
 import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,6 +211,15 @@ public class JudgeServiceImpl implements JudgeService {
         scoreList.set(scoreIndex, finallyScore);
 
         examProcess.setScoreList(scoreList);
+        Integer problemId = Integer.valueOf(judgeReport.getJudgeConfig().getProblemId());
+
+        ProblemAnswer problemAnswer = new ProblemAnswer();
+        problemAnswer.setProblemId(problemId);
+        problemAnswer.setBasicPassed(judgeReport.getBasicCasesPassed());
+        problemAnswer.setSpecialCasePassList(judgeReport.getSpecialCasesPassedList());
+        problemAnswer.setCode(judgeReport.getJudgeConfig().getCode());
+        examProcess.getProgramProblemAnswerMap().put(problemId, problemAnswer);
+
         redisCache.setCacheObject("exam:" + examUUID, objectMapper.writeValueAsString(examProcess));
     }
 }

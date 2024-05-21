@@ -1,10 +1,12 @@
 package com.todd.toj_backend.serviceImpl;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.NullOutputStream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todd.toj_backend.mapper.CourseMapper;
-import com.todd.toj_backend.mapper.ExamMapper;
-import com.todd.toj_backend.mapper.JobMapper;
+import com.todd.toj_backend.mapper.*;
+import com.todd.toj_backend.pojo.choice_problem.ChoiceProblem;
+import com.todd.toj_backend.pojo.choice_problem.ChoiceProblemDao;
 import com.todd.toj_backend.pojo.course.AttendCourse;
 import com.todd.toj_backend.pojo.course.Course;
 import com.todd.toj_backend.pojo.course.CourseExam;
@@ -12,11 +14,25 @@ import com.todd.toj_backend.pojo.exam.*;
 import com.todd.toj_backend.pojo.job.AttendJob;
 import com.todd.toj_backend.pojo.job.Job;
 import com.todd.toj_backend.pojo.job.JobExam;
+import com.todd.toj_backend.pojo.problem.Problem;
+import com.todd.toj_backend.pojo.problem.ProblemAnswer;
 import com.todd.toj_backend.service.ExamService;
+import com.todd.toj_backend.utils.ExcelUtil;
 import com.todd.toj_backend.utils.RedisCache;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +51,12 @@ public class ExamServiceImpl implements ExamService {
 
     @Autowired
     ExamMapper examMapper;
+
+    @Autowired
+    ChoiceProblemMapper choiceProblemMapper;
+
+    @Autowired
+    ProblemMapper problemMapper;
 
     @Override
     public Exam getExam(String examId) {
@@ -107,6 +129,11 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
+    public List<ExamScore> getExamScoreList(String examId) {
+        return examMapper.queryExamScoreList(examId);
+    }
+
+    @Override
     public Integer addExam(Exam exam) {
         return examMapper.insertExam(exam);
     }
@@ -171,7 +198,8 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public void finishExam(String examUUID) throws JsonProcessingException {
+    @Transactional
+    public void finishExam(String examUUID) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String msg = redisCache.getCacheObject("exam:" + examUUID);
         if(msg == null){
@@ -186,7 +214,7 @@ public class ExamServiceImpl implements ExamService {
         long timeUsedMS = new Date().getTime() - startTime.getTime();
         int timeUsedSecond = (int) (timeUsedMS / 1000);
         examResult.setTimeUsed(timeUsedSecond);
-        Float totalScore = 0f;
+        float totalScore = 0f;
         for(float score : examProcess.getScoreList()){
             totalScore += score;
         }
@@ -194,6 +222,32 @@ public class ExamServiceImpl implements ExamService {
 
         examMapper.insertExamResult(examResult);
         redisCache.deleteObject("exam:" + examUUID);
+
+        String examResultPath = "D:/toj_files/exam_result/exam_"
+                + examProcess.getExamId() + "_user_"
+                + examProcess.getUserId() + ".xlsm";
+        FileUtil.copy(Paths.get("D:/toj_files/template.xlsm"),
+                Paths.get(examResultPath),
+                StandardCopyOption.REPLACE_EXISTING);
+        XSSFWorkbook workbook = new XSSFWorkbook(examResultPath);
+        Sheet sheet = workbook.getSheetAt(0);
+        sheet.createRow(0).createCell(0).setCellValue("完成时间：" + timeUsedSecond + "秒");
+        for(var problem : examProcess.getExamItemList()){
+            if(problem.getType().equals("choice")){
+                ChoiceProblemDao choiceProblem = choiceProblemMapper.queryChoiceProblem(problem.getProblemId().toString());
+                List<String> answerList = examProcess.getChoiceProblemAnswerMap().get(problem.getProblemId());
+                if(answerList == null) continue;
+                ExcelUtil.printChoiceProblemAnswer(sheet, choiceProblem.getTitle(), answerList);
+            }else if(problem.getType().equals("program")){
+                Problem programProblem = problemMapper.queryProblem(problem.getProblemId().toString());
+                ProblemAnswer problemAnswer = examProcess.getProgramProblemAnswerMap().get(problem.getProblemId());
+                if (problemAnswer == null) continue;
+                ExcelUtil.printProgramProblemAnswer(sheet, programProblem.getTitle(), problemAnswer);
+            }
+        }
+
+        workbook.write(new NullOutputStream());
+        workbook.close();
     }
 
 }

@@ -1,12 +1,19 @@
 package com.todd.toj_backend;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mq.mq_sender.RunMQSender;
+import com.todd.toj_backend.pojo.exam.ExamProcess;
 import com.todd.toj_backend.service.CommentService;
 import com.todd.toj_backend.mq.mq_sender.JudgeMQSender;
 import com.todd.toj_backend.utils.RedisCache;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @SpringBootTest
 class TojBackendApplicationTests {
@@ -124,5 +131,13 @@ class TojBackendApplicationTests {
 //        }
 //
 //    }
-
+//    @Test
+//    void JsonTest() throws JsonProcessingException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ExamProcess examProcess = new ExamProcess();
+//        examProcess.getChoiceProblemAnswerMap().put(1, Arrays.asList("1", "2"));
+//        String test = objectMapper.writeValueAsString(examProcess);
+//        examProcess = objectMapper.readValue(test, ExamProcess.class);
+//        return;
+//    }
 }

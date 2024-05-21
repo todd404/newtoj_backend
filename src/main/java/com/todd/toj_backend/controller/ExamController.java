@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -53,6 +54,13 @@ public class ExamController {
 
         List<Exam> myExamList = examService.getOwnExamList(loginUser.getUser().getUserId().toString());
         return new ResponseResult(200, myExamList);
+    }
+
+    @GetMapping("/score-list")
+    public ResponseResult examScoreList(@RequestParam String examId){
+        List<ExamScore> examScoreList = examService.getExamScoreList(examId);
+
+        return new ResponseResult(200, examScoreList);
     }
 
     @GetMapping("/course-exam-list")
@@ -138,7 +146,7 @@ public class ExamController {
     }
 
     @GetMapping("/finish-exam")
-    public ResponseResult finishExam(@RequestParam("examUUID") String examUUID) throws JsonProcessingException {
+    public ResponseResult finishExam(@RequestParam("examUUID") String examUUID) throws IOException {
         examService.finishExam(examUUID);
         return new ResponseResult(200, "");
     }

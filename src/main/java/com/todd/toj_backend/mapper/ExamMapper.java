@@ -31,6 +31,11 @@ public interface ExamMapper {
     @Select("select * from job_exam where job_id = #{jobId}")
     List<JobExam> queryJobExam(String jobId);
 
+    @Select("SELECT exam_result.id, exam_id, exam_result.user_id, user.username, user.nickname, score, timeUsed FROM exam_result " +
+            "inner join user on exam_result.user_id =  user.user_id " +
+            "where exam_id = #{examId}")
+    List<ExamScore> queryExamScoreList(String examId);
+
     @Insert("insert into exam (user_id, title, start_time, end_time, time_limit, exam_item_list) VALUES " +
             "(#{userId}, #{title}, #{startTime}, #{endTime}, #{timeLimit}, #{examItemList, typeHandler=com.todd.toj_backend.utils.JacksonTypeHandler})")
     Integer insertExam(Exam exam);

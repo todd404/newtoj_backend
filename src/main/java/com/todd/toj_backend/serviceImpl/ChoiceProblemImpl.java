@@ -89,6 +89,7 @@ public class ChoiceProblemImpl implements ChoiceProblemService {
         scoreList.set(scoreIndex, score);
 
         examProcess.setScoreList(scoreList);
+        examProcess.getChoiceProblemAnswerMap().put(Integer.valueOf(choiceProblemId), answerList);
         redisCache.setCacheObject("exam:"+examUUID, objectMapper.writeValueAsString(examProcess));
     }
 }

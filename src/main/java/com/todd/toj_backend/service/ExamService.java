@@ -6,6 +6,8 @@ import com.todd.toj_backend.pojo.exam.*;
 import com.todd.toj_backend.pojo.job.JobExam;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -16,6 +18,7 @@ public interface ExamService {
     List<CourseExam> getCourseExamList(String courseId);
     List<JobExam> getJobExamList(String jobId);
     List<AttendExam> getAttendExamList(String userId);
+    List<ExamScore> getExamScoreList(String examId);
     Integer addExam(Exam exam);
     Integer addCourseExam(CourseExam courseExam);
     Integer addJobExam(JobExam jobExam);
@@ -23,5 +26,5 @@ public interface ExamService {
     Integer deleteJobExam(JobExam jobExam);
 
     ExamStartResponse startExam(String examId, String userId) throws JsonProcessingException;
-    void finishExam(String examUUID) throws JsonProcessingException;
+    void finishExam(String examUUID) throws IOException;
 }

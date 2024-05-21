@@ -2,15 +2,41 @@ type-maps:
   cpp-type-map:
     int: int
     "[int[]]": vector<int>
+    "[int[][]]": vector<vector<int>>
+    double: double
+    "[double[]]": vector<double>
+    "[double[][]]": vector<vector<double>>
+    string: string
+    "[string[]]": vector<string>
+    bool: bool
 
   java-type-map:
     int: int
     "[int[]]": int[]
+    "[int[][]]": int[][]
+    double: double
+    "[double[]]": double[]
+    "[double[][]]": double[][]
+    string: String
+    "[string[]]": String[]
+    bool: boolean
 
   argument-function-map:
     int: stringToInt
     "[int[]]": stringToIntArray
+    "[int[][]]": stringToIntTwoDimArray
+    double: stringToDouble
+    "[double[]]": stringToDoubleArray
+    "[double[][]]": stringToDoubleTwoDimArray
+    string: quoteStringToString
+    "[string[]]": stringToStringArray
 
   return-function-map:
     int: intToString
     "[int[]]": intArrayToString
+    "[int[][]]": intTwoDimArrayToString
+    double: doubleToString
+    "[double[]]": doubleArrayToString
+    "[double[][]]": doubleTwoDimArrayToString
+    string: stringToQuoteString
+    "[string[]]": stringArrayToString

@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
@@ -23,7 +24,7 @@ public class Schedule {
     ExamService examService;
 
     @Scheduled(fixedRate = 1000)
-    public void checkExamTimeLimit() throws JsonProcessingException {
+    public void checkExamTimeLimit() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         Collection<String> examUUIDList = redisCache.keys("exam:*");
         for(String uuid : examUUIDList){
