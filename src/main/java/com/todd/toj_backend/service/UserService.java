@@ -13,4 +13,6 @@ public interface UserService {
     Boolean isUsernameRepeat(String username);
     Boolean isNicknameRepeat(String nickname);
     Integer addUser(User user);
+
+    Integer changeUserRole(User user);
 }

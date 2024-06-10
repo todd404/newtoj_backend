@@ -3,6 +3,7 @@ package com.todd.toj_backend.serviceImpl;
 import com.todd.toj_backend.mapper.UserMapper;
 import com.todd.toj_backend.mapper.WhisperMapper;
 import com.todd.toj_backend.pojo.user.User;
+import com.todd.toj_backend.pojo.whisper.GroupWhisper;
 import com.todd.toj_backend.pojo.whisper.UnreadWhisper;
 import com.todd.toj_backend.pojo.whisper.Whisper;
 import com.todd.toj_backend.pojo.whisper.WhisperHistory;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class WhisperServiceImpl implements WhisperService {
@@ -80,6 +82,22 @@ public class WhisperServiceImpl implements WhisperService {
     @Override
     public Integer sendWhisper(Whisper whisper) {
         return whisperMapper.insertWhisper(whisper);
+    }
+
+    @Override
+    public Boolean sendGroupWhisper(GroupWhisper groupWhisper, String userId) {
+        for(String receiveId : groupWhisper.getRecieveIdList()){
+            if(receiveId.equals(userId))
+                continue;
+            Whisper whisper = new Whisper();
+            whisper.setReceiveUserId(receiveId);
+            whisper.setSendUserId(userId);
+            whisper.setContent(groupWhisper.getWhisperContent());
+
+            sendWhisper(whisper);
+        }
+
+        return true;
     }
 
     @Override

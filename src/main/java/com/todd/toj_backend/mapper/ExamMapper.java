@@ -14,8 +14,15 @@ public interface ExamMapper {
     @Result(column = "exam_item_list", property = "examItemList", typeHandler = JacksonTypeHandler.class)
     Exam queryExam(String examId);
 
-    @Select("select * from exam_result where exam_id = #{examId} and user_id = #{userId}")
+    @Select("select id, exam_id, user_id, score, timeUsed, finish_at, answer_collect " +
+            "from exam_result where exam_id = #{examId} and user_id = #{userId}")
+    @Result(column = "answer_collect", property = "answerCollect", typeHandler = JacksonTypeHandler.class)
     ExamResult queryExamResult(@Param("examId") String examId, @Param("userId") String userId);
+
+    @Select("select id, exam_id, user_id, score, timeUsed, finish_at, answer_collect " +
+            "from exam_result where exam_id = #{examId}")
+    @Result(column = "answer_collect", property = "answerCollect", typeHandler = JacksonTypeHandler.class)
+    List<ExamResult> queryExamResultList(@Param("examId") String examId);
 
     @Select("select exam.id, title, start_time, end_time, time_limit, score " +
             "from exam left join exam_result er on exam.id = er.exam_id and er.user_id = #{userId} " +
@@ -48,8 +55,8 @@ public interface ExamMapper {
             "values (#{jobId}, #{examId})")
     Integer insertJobExam(JobExam jobExam);
 
-    @Insert("insert ignore into exam_result (exam_id, user_id, score, timeUsed) VALUES " +
-            "(#{examId}, #{userId}, #{score}, #{timeUsed})")
+    @Insert("insert ignore into exam_result (exam_id, user_id, score, timeUsed, answer_collect) VALUES " +
+            "(#{examId}, #{userId}, #{score}, #{timeUsed}, #{answerCollect, typeHandler=com.todd.toj_backend.utils.JacksonTypeHandler})")
     Integer insertExamResult(ExamResult examResult);
 
     @Delete("delete from course_exam where course_id = #{courseId} and exam_id = #{examId}")

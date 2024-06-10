@@ -11,6 +11,7 @@ import com.todd.toj_backend.pojo.run.RunStatusResponse;
 import com.todd.toj_backend.service.RunService;
 import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,15 +30,18 @@ public class RunServiceImpl implements RunService {
     @Autowired
     RedisCache redisCache;
 
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
+
     @Override
     public String runForResult(RunRequest runRequest) throws IOException {
         String uuid = UUID.randomUUID().toString();
 
-        String basePath = "D:/toj_files/run/" + uuid;
+        String basePath = baseFilePath + "/run/" + uuid;
         String templateFilePath = basePath + "/template." + runRequest.getLanguage();
         String testFilePath = basePath + "/test.txt";
 
-        String templateFileSrc = "D:/toj_files/%s/template/".formatted(runRequest.getLanguage())
+        String templateFileSrc = "%s/%s/template/".formatted(baseFilePath, runRequest.getLanguage())
                 + runRequest.getProblemId() + "." + runRequest.getLanguage();
         Files.createDirectory(Path.of(basePath));
         FileUtil.copy(Paths.get(templateFileSrc), Paths.get(templateFilePath));
@@ -66,7 +70,7 @@ public class RunServiceImpl implements RunService {
         if(msg == null || msg == "")
             return null;
 
-        String answerFilePath = "D:/toj_files/run/" + uuid + "/answer.txt";
+        String answerFilePath = baseFilePath + "/run/" + uuid + "/answer.txt";
         RunStatusResponse runStatusResponse = new RunStatusResponse();
         RunReport runReport = objectMapper.readValue(msg, RunReport.class);
         runStatusResponse.setStatusCode(runReport.getStatusCode());

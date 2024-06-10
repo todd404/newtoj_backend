@@ -5,6 +5,7 @@ import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.upload.UploadResponse;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.pojo.user.UserInfo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,11 +22,14 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class UploadController {
 
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
+
     @PreAuthorize("hasAnyAuthority('user')")
     @PostMapping("/upload")
     public ResponseResult upload(@RequestParam("file") MultipartFile file) throws IOException {
         String savedFileName = UUID.randomUUID() + "." + FileUtil.extName(file.getOriginalFilename());
-        String saveDirPath = "D:/toj_files/temp/";
+        String saveDirPath = baseFilePath + "/temp/";
         File savedFile = new File(saveDirPath + savedFileName);
         if(!savedFile.createNewFile()){
             return new ResponseResult<>(500, "上传文件失败");
@@ -42,7 +46,7 @@ public class UploadController {
         LoginUser loginUser = (LoginUser) principal;
 
         String savedFileName = loginUser.getUser().getUserId() + ".png";
-        String saveDirPath = "D:/toj_files/avatar/";
+        String saveDirPath = baseFilePath + "/avatar/";
         File savedFile = new File(saveDirPath + savedFileName);
         file.transferTo(savedFile);
 

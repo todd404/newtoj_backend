@@ -2,6 +2,7 @@ package com.todd.toj_backend.controller;
 
 import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.user.LoginUser;
+import com.todd.toj_backend.pojo.whisper.GroupWhisper;
 import com.todd.toj_backend.pojo.whisper.Whisper;
 import com.todd.toj_backend.pojo.whisper.WhisperHistory;
 import com.todd.toj_backend.service.WhisperService;
@@ -40,6 +41,19 @@ public class WhisperController {
         }else{
             return new ResponseResult<>(500, "发送失败");
         }
+    }
+
+    @PostMapping("/send-group-whisper")
+    ResponseResult sendGroupWhisper(@RequestBody GroupWhisper groupWhisper){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LoginUser loginUser = (LoginUser) principal;
+
+        boolean result = whisperService.sendGroupWhisper(groupWhisper, loginUser.getUser().getUserId().toString());
+        if(result){
+           return new ResponseResult(200, "发送成功");
+        }
+
+        return new ResponseResult(500, "发送失败");
     }
 
     @PreAuthorize("hasAnyAuthority('user')")

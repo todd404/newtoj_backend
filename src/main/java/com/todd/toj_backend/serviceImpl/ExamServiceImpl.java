@@ -2,10 +2,10 @@ package com.todd.toj_backend.serviceImpl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.NullOutputStream;
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todd.toj_backend.mapper.*;
-import com.todd.toj_backend.pojo.choice_problem.ChoiceProblem;
 import com.todd.toj_backend.pojo.choice_problem.ChoiceProblemDao;
 import com.todd.toj_backend.pojo.course.AttendCourse;
 import com.todd.toj_backend.pojo.course.Course;
@@ -16,32 +16,31 @@ import com.todd.toj_backend.pojo.job.Job;
 import com.todd.toj_backend.pojo.job.JobExam;
 import com.todd.toj_backend.pojo.problem.Problem;
 import com.todd.toj_backend.pojo.problem.ProblemAnswer;
+import com.todd.toj_backend.pojo.user.User;
 import com.todd.toj_backend.service.ExamService;
 import com.todd.toj_backend.utils.ExcelUtil;
 import com.todd.toj_backend.utils.RedisCache;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ExamServiceImpl implements ExamService {
     @Autowired
     RedisCache redisCache;
+
+    @Autowired
+    UserMapper userMapper;
 
     @Autowired
     CourseMapper courseMapper;
@@ -57,6 +56,9 @@ public class ExamServiceImpl implements ExamService {
 
     @Autowired
     ProblemMapper problemMapper;
+
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
 
     @Override
     public Exam getExam(String examId) {
@@ -220,13 +222,23 @@ public class ExamServiceImpl implements ExamService {
         }
         examResult.setScore(totalScore);
 
+        List<ChoiceProblemAnswer> choiceProblemAnswerList = new ArrayList<>();
+
+        examProcess.getChoiceProblemAnswerMap().forEach((key, value)->{
+            ChoiceProblemAnswer choiceProblemAnswer = new ChoiceProblemAnswer();
+            choiceProblemAnswer.setChoiceProblemId(key);
+            choiceProblemAnswer.setAnswerList(value);
+            choiceProblemAnswerList.add(choiceProblemAnswer);
+        });
+        examResult.setAnswerCollect(choiceProblemAnswerList);
+
         examMapper.insertExamResult(examResult);
         redisCache.deleteObject("exam:" + examUUID);
 
-        String examResultPath = "D:/toj_files/exam_result/exam_"
+        String examResultPath = baseFilePath + "/exam_result/exam_"
                 + examProcess.getExamId() + "_user_"
                 + examProcess.getUserId() + ".xlsm";
-        FileUtil.copy(Paths.get("D:/toj_files/template.xlsm"),
+        FileUtil.copy(Paths.get(baseFilePath + "/template.xlsm"),
                 Paths.get(examResultPath),
                 StandardCopyOption.REPLACE_EXISTING);
         XSSFWorkbook workbook = new XSSFWorkbook(examResultPath);
@@ -248,6 +260,48 @@ public class ExamServiceImpl implements ExamService {
 
         workbook.write(new NullOutputStream());
         workbook.close();
+    }
+
+    @Override
+    public boolean getExamResultExcel(String examId, OutputStream outputStream) throws IOException {
+        List<ExamResult> examResultList = examMapper.queryExamResultList(examId);
+        if(examResultList.isEmpty()) return false;
+
+        Map<Integer, List<UserExamChoiceAnswer>> answerMap = new HashMap<>();
+
+        for(ExamResult examResult : examResultList){
+            String json = JSONUtil.toJsonStr(examResult.getAnswerCollect());
+            List<ChoiceProblemAnswer> choiceProblemAnswerList = JSONUtil.toList(json, ChoiceProblemAnswer.class);
+            for(ChoiceProblemAnswer choiceProblemAnswer : choiceProblemAnswerList){
+                List<UserExamChoiceAnswer> userExamChoiceAnswerList = answerMap.computeIfAbsent(
+                        choiceProblemAnswer.getChoiceProblemId(),
+                        k -> new ArrayList<>()
+                );
+
+                UserExamChoiceAnswer userExamChoiceAnswer = new UserExamChoiceAnswer();
+                User user = userMapper.queryUserByUserId(String.valueOf(examResult.getUserId()));
+                userExamChoiceAnswer.setUserId(user.getUserId());
+                userExamChoiceAnswer.setUsername(user.getUsername());
+                userExamChoiceAnswer.setNickname(user.getNickname());
+                userExamChoiceAnswer.setScore(examResult.getScore());
+                userExamChoiceAnswer.setAnswerList(choiceProblemAnswer.getAnswerList());
+
+                userExamChoiceAnswerList.add(userExamChoiceAnswer);
+            }
+        }
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet();
+
+        answerMap.forEach((key, value)->{
+            Exam exam = examMapper.queryExam(key.toString());
+            ExcelUtil.printChoiceAnswerList(sheet, exam.getTitle(), value);
+        });
+
+        workbook.write(outputStream);
+        workbook.dispose();
+        workbook.close();
+        return true;
     }
 
 }

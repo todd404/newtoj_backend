@@ -12,6 +12,7 @@ import com.todd.toj_backend.pojo.run.RunConfig;
 import com.todd.toj_backend.pojo.run.RunReport;
 import com.todd.toj_backend.utils.add_problem.RandomCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +36,14 @@ public class AddProblemAsync {
 
     @Autowired
     ProblemMapper problemMapper;
+
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
+
     @Async
     @Transactional
     public void addProblemProcess(AddProblemRequest addProblemRequest, String uuid) throws IOException, InterruptedException {
-        String basePath = "D:/toj_files/run/" + uuid;
+        String basePath = baseFilePath + "/run/" + uuid;
         String cppTemplateFilePath = basePath + "/template.cpp";
         String javaTemplateFilePath = basePath + "/template.java";
         String testFilePath = basePath + "/test.txt";
@@ -48,7 +53,7 @@ public class AddProblemAsync {
         javaFileBuilder.buildFile(addProblemRequest.getProblemConfig(), javaTemplateFilePath);
 
         if(addProblemRequest.getProblemCaseConfig().getCaseUploadedFile() != ""){
-            FileUtil.copy(Paths.get("D:/toj_files/temp/" + addProblemRequest.getProblemCaseConfig().getCaseUploadedFile()),
+            FileUtil.copy(Paths.get(baseFilePath + "/temp/" + addProblemRequest.getProblemCaseConfig().getCaseUploadedFile()),
                     Paths.get(testFilePath));
         }else{
             StringBuilder testCaseContent = new StringBuilder();
@@ -93,10 +98,10 @@ public class AddProblemAsync {
                 problemMapper.insertProblem(problem);
                 problemMapper.insertProblemTags(problem.getId(), addProblemRequest.getProblemTags());
 
-                FileUtil.move(Paths.get(cppTemplateFilePath), Paths.get("D:/toj_files/cpp/template/" + problem.getId() + ".cpp"), true);
-                FileUtil.move(Paths.get(javaTemplateFilePath), Paths.get("D:/toj_files/java/template/" + problem.getId() + ".java"), true);
-                FileUtil.move(Paths.get(testFilePath), Paths.get("D:/toj_files/test/" + problem.getId() + ".txt"), true);
-                FileUtil.move(Paths.get(answerFilePath), Paths.get("D:/toj_files/answer/" + problem.getId() + ".txt"), true);
+                FileUtil.move(Paths.get(cppTemplateFilePath), Paths.get(baseFilePath + "/cpp/template/" + problem.getId() + ".cpp"), true);
+                FileUtil.move(Paths.get(javaTemplateFilePath), Paths.get( baseFilePath+ "/java/template/" + problem.getId() + ".java"), true);
+                FileUtil.move(Paths.get(testFilePath), Paths.get(baseFilePath + "/test/" + problem.getId() + ".txt"), true);
+                FileUtil.move(Paths.get(answerFilePath), Paths.get(baseFilePath + "/answer/" + problem.getId() + ".txt"), true);
             }
 
             break;

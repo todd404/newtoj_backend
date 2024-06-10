@@ -1,9 +1,11 @@
 package com.todd.toj_backend;
 
 import com.todd.toj_backend.mapper.CommentMapper;
+import com.todd.toj_backend.mapper.ExamMapper;
 import com.todd.toj_backend.mapper.ProblemMapper;
 import com.todd.toj_backend.mapper.WhisperMapper;
 import com.todd.toj_backend.pojo.TypeMap;
+import com.todd.toj_backend.pojo.exam.ExamResult;
 import com.todd.toj_backend.pojo.problem.ProblemsetItem;
 import com.todd.toj_backend.pojo.whisper.UnreadWhisper;
 import com.todd.toj_backend.pojo.whisper.Whisper;
@@ -26,6 +28,9 @@ public class MapperTest {
     CommentMapper commentMapper;
 
    @Autowired
+    ExamMapper examMapper;
+
+   @Autowired
     TypeMap typeMap;
 
     @Test
@@ -44,4 +49,11 @@ public class MapperTest {
     void typeMapTest(){
         System.out.println(typeMap.getCppTypeMap().get("int[][]"));
     }
+
+    @Test
+    void examMapTest(){
+        ExamResult result = examMapper.queryExamResult("2", "2");
+        return;
+    }
+
 }

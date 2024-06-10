@@ -1,10 +1,7 @@
 package com.todd.toj_backend.mapper;
 
 import com.todd.toj_backend.pojo.user.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -25,4 +22,7 @@ public interface UserMapper {
     @Insert("insert ignore into user (username, password, nickname) " +
             "VALUES (#{username}, #{password}, #{nickname})")
     Integer insertUser(User user);
+
+    @Update("update user set role = #{role} where user_id = #{userId}")
+    Integer updateUserRole(User user);
 }

@@ -6,10 +6,12 @@ import com.todd.toj_backend.pojo.ResponseResult;
 import com.todd.toj_backend.pojo.Uuid;
 import com.todd.toj_backend.pojo.problem.add_problem.AddProblemRequest;
 import com.todd.toj_backend.pojo.run.RunReport;
+import com.todd.toj_backend.pojo.user.User;
 import com.todd.toj_backend.service.ProblemService;
 import com.todd.toj_backend.service.UserService;
 import com.todd.toj_backend.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -49,5 +51,16 @@ public class AdminController {
         RunReport runReport = objectMapper.readValue(msg, RunReport.class);
 
         return new ResponseResult(200, runReport);
+    }
+
+
+    @PostMapping("/change-user-role")
+    public ResponseResult changeUserRole(@RequestBody User user){
+        int result = userService.changeUserRole(user);
+        if(result == 0){
+            return new ResponseResult<>(500, "不存在角色");
+        }
+
+        return new ResponseResult<>(200, "");
     }
 }

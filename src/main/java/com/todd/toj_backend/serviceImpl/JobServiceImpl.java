@@ -6,6 +6,7 @@ import com.todd.toj_backend.pojo.job.AddJobRequest;
 import com.todd.toj_backend.pojo.job.Job;
 import com.todd.toj_backend.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,9 @@ import java.util.List;
 public class JobServiceImpl implements JobService {
     @Autowired
     JobMapper jobMapper;
+
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
 
     @Override
     public List<Job> getUnexpiredJobList() {
@@ -42,8 +46,8 @@ public class JobServiceImpl implements JobService {
     @Transactional
     public Integer addJob(AddJobRequest job) {
         var result = jobMapper.insertJob(job);
-        FileUtil.move(Paths.get("D:/toj_files/temp/" + job.getCoverFile()),
-                Paths.get("D:/toj_files/cover/job/" + job.getId() + ".jpg"), true);
+        FileUtil.move(Paths.get(baseFilePath + "/temp/" + job.getCoverFile()),
+                Paths.get(baseFilePath + "/cover/job/" + job.getId() + ".jpg"), true);
 
         return result;
     }

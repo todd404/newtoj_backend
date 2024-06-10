@@ -6,8 +6,8 @@ import com.todd.toj_backend.pojo.exam.*;
 import com.todd.toj_backend.pojo.job.JobExam;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 @Service
@@ -27,4 +27,6 @@ public interface ExamService {
 
     ExamStartResponse startExam(String examId, String userId) throws JsonProcessingException;
     void finishExam(String examUUID) throws IOException;
+
+    boolean getExamResultExcel(String examId, OutputStream outputStream) throws IOException;
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import com.todd.toj_backend.pojo.TypeMap;
 import com.todd.toj_backend.pojo.problem.ProblemConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,10 +18,13 @@ public class JavaFileBuilder implements FileBuilder{
     @Autowired
     TypeMap typeMap;
 
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
+
     @Override
     public void buildFile(ProblemConfig problemConfig, String outputPath) throws IOException {
         StringBuilder fileContent = new StringBuilder();
-        String basePath = "D:\\toj_files\\java_template\\";
+        String basePath = baseFilePath + "/java_template/";
 
         //import 文件
         String headerFileContent = FileUtil.readString(basePath + "import.java", StandardCharsets.UTF_8) + "\n";

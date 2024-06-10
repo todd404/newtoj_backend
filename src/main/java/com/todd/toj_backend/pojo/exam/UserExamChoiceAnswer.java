@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class ExamResult {
-    Integer id;
-    Integer examId;
+public class UserExamChoiceAnswer {
     Integer userId;
+    String username;
+    String nickname;
     Float score;
-    Integer timeUsed;
-    List<ChoiceProblemAnswer> answerCollect = new ArrayList<>();
+    List<String> answerList = new ArrayList<>();
 }

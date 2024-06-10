@@ -6,6 +6,7 @@ import com.todd.toj_backend.pojo.problem.ProblemConfig;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,15 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@AllArgsConstructor
 @Component("cppFileBuilder")
 public class CppFileBuilder implements FileBuilder {
     @Autowired
     TypeMap typeMap;
 
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
+
     public void buildFile(ProblemConfig problemConfig, String outputPath) throws IOException {
         StringBuilder fileContent = new StringBuilder();
-        String basePath = "D:\\toj_files\\cpp_template\\";
+        String basePath = baseFilePath + "/cpp_template/";
 
         //头文件
         String headerFileContent = readFileToString(basePath + "headers.h") + "\n";

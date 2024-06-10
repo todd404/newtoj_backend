@@ -8,6 +8,7 @@ import com.todd.toj_backend.pojo.course.Course;
 import com.todd.toj_backend.pojo.course.CourseFile;
 import com.todd.toj_backend.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,9 @@ import java.util.Objects;
 public class CourseServiceImpl implements CourseService {
     @Autowired
     CourseMapper courseMapper;
+
+    @Value("${file-path.base-file-path}")
+    String baseFilePath;
 
     @Override
     public List<Course> getAllCourseList() {
@@ -50,8 +54,8 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public void addCourse(AddCourseRequest addCourseRequest) {
         courseMapper.insertCourse(addCourseRequest);
-        FileUtil.move(Paths.get("D:/toj_files/temp/" + addCourseRequest.getCoverFile()),
-                Paths.get("D:/toj_files/cover/course/" + addCourseRequest.getId() + ".jpg"),
+        FileUtil.move(Paths.get(baseFilePath + "/temp/" + addCourseRequest.getCoverFile()),
+                Paths.get(baseFilePath + "/cover/course/" + addCourseRequest.getId() + ".jpg"),
                 true);
     }
 
@@ -76,7 +80,7 @@ public class CourseServiceImpl implements CourseService {
         courseMapper.insertCourseFile(courseFile);
 
         String savedFileName = file.getOriginalFilename();
-        String saveDirPath = "D:/toj_files/course_file/" + courseId + "/";
+        String saveDirPath = baseFilePath + "/course_file/" + courseId + "/";
         if(!FileUtil.exist(saveDirPath)){
             FileUtil.mkdir(saveDirPath);
         }
@@ -93,7 +97,7 @@ public class CourseServiceImpl implements CourseService {
             return false;
 
         String file = courseFile.getFile();
-        String filePath = "D:/toj_files/course_file/" + courseId + "/";
+        String filePath = baseFilePath + "/course_file/" + courseId + "/";
         FileUtil.del(filePath + file);
         courseMapper.deleteCourseFile(courseFileId);
 
@@ -103,7 +107,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void deleteAllCourseFile(String courseId) {
         courseMapper.deleteAllCourseFile(courseId);
-        String filePath = "D:/toj_files/course_file/" + courseId;
+        String filePath = baseFilePath + "/course_file/" + courseId;
         FileUtil.del(filePath);
     }
 

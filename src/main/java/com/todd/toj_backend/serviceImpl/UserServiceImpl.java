@@ -61,4 +61,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         return userMapper.insertUser(user);
     }
+
+    @Override
+    public Integer changeUserRole(User user) {
+        return userMapper.updateUserRole(user);
+    }
 }

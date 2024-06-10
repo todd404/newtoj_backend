@@ -8,10 +8,16 @@ import com.todd.toj_backend.pojo.job.JobExam;
 import com.todd.toj_backend.pojo.user.LoginUser;
 import com.todd.toj_backend.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.List;
 
 @RestController
@@ -149,5 +155,20 @@ public class ExamController {
     public ResponseResult finishExam(@RequestParam("examUUID") String examUUID) throws IOException {
         examService.finishExam(examUUID);
         return new ResponseResult(200, "");
+    }
+
+    @GetMapping("/download-exam-all-answer")
+    public ResponseEntity<byte[]> downloadExamAllAnswer(@RequestParam("examId") String examId) throws IOException {
+        PipedInputStream inputStream = new PipedInputStream(10240);
+        PipedOutputStream outputStream = new PipedOutputStream(inputStream);
+
+        examService.getExamResultExcel(examId, outputStream);
+        byte[] buffer = new byte[10240];
+        int length = inputStream.read(buffer);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + "exam_" + examId + ".xlsx")
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .contentLength(length)
+                .body(buffer);
     }
 }
